@@ -31,6 +31,19 @@ class ScheduleEntryController extends Controller
             });
         }
 
+        // Фильтрация по тегам
+        if ($request->filled('tags')) {
+            $tagIds = $request->query('tags');
+            if (is_array($tagIds) && !empty($tagIds)) {
+                $validatedTagIds = array_filter($tagIds, 'is_numeric');
+                if (!empty($validatedTagIds)) {
+                    $query->whereHas('tags', function ($q) use ($validatedTagIds) {
+                        $q->whereIn('tags.id', $validatedTagIds);
+                    });
+                }
+            }
+        }
+
         $entries = $query->orderBy('day_of_week')->orderBy('start_time')->get();
 
         $groupedEntries = $entries->groupBy('day_of_week');

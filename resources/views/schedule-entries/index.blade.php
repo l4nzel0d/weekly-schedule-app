@@ -26,23 +26,52 @@
         </button>
     </div>
 
-    {{-- Форма поиска --}}
-    <form action="{{ route('schedule-entries.index') }}" method="GET" class="mb-3">
-        {{-- Добавляем скрытые поля для всех текущих параметров, кроме самого поиска --}}
+    {{-- Форма поиска и фильтрации --}}
+    <form action="{{ route('schedule-entries.index') }}" method="GET" class="mb-3" id="schedule-filter-form">
+
+        {{-- Скрытые поля для сохранения других параметров URL (например, 'day') --}}
         @foreach (request()->query() as $key => $value)
-            @if ($key !== 'search')
+            @if ($key !== 'search' && $key !== 'tags')
                 <input type="hidden" name="{{ $key }}" value="{{ $value }}">
             @endif
         @endforeach
 
-        <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="Поиск по названию или описанию..." value="{{ request('search') }}">
-            <button class="btn btn-outline-secondary" type="submit">Найти</button>
-            @if (request('search'))
-                <a href="{{ route('schedule-entries.index', array_diff_key(request()->query(), ['search' => null])) }}" class="btn btn-outline-danger">Сбросить</a>
-            @endif
+        <div class="row g-2">
+            {{-- Колонка для Поиска --}}
+            <div class="col-sm">
+                <input type="text" name="search" class="form-control" placeholder="Поиск по названию или описанию..." value="{{ request('search') }}">
+            </div>
+
+            {{-- Колонка для нашего нового компонента "Tag Input" --}}
+            <div class="col-sm-7">
+                <div class="form-control d-flex flex-wrap align-items-center gap-1" id="tag-input-container" style="min-height: 38px; height: auto;">
+                    {{-- Сюда JS будет добавлять бейджи выбранных тегов --}}
+                    <div class="dropdown d-inline-block">
+                        <button class="btn btn-sm btn-light py-0 px-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Добавить тег">Добавить тег +</button>
+                        <div class="dropdown-menu p-2" id="tag-selection-dropdown" style="width: 250px;">
+                            {{-- Сюда JS будет добавлять пункты меню (теги) --}}
+                        </div>
+                    </div>
+                </div>
+                {{-- Скрытый контейнер для input'ов для отправки на сервер --}}
+                <div class="d-none" id="tag-hidden-inputs"></div>
+            </div>
+
+            {{-- Колонка для кнопок "Применить" и "Сбросить" --}}
+            <div class="col-sm-auto">
+                <button type="submit" class="btn btn-primary">Применить</button>
+                <a href="{{ route('schedule-entries.index') }}" class="btn btn-outline-secondary">Сбросить</a>
+            </div>
         </div>
     </form>
+
+    {{-- Скрипт для передачи данных из PHP в JavaScript --}}
+    <script>
+        window.scheduleFilter = {
+            allTags: {!! json_encode($tags->keyBy('id')) !!},
+            initialTagIds: {!! json_encode(request('tags', [])) !!}
+        };
+    </script>
 
     {{-- Таблица с расписанием --}}
     <div class="table-responsive">
