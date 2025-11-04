@@ -7,14 +7,14 @@
     {{-- Переключатель дней недели --}}
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
-            <a class="nav-link {{ request('day') == 'all' || !request()->has('day') ? 'active' : '' }}" href="{{ route('schedule-entries.index', ['day' => 'all']) }}">Вся неделя</a>
+            <a class="nav-link {{ request('day') == 'all' || !request()->has('day') ? 'active' : '' }}" href="{{ route('schedule-entries.index', array_merge(request()->query(), ['day' => 'all'])) }}">Вся неделя</a>
         </li>
         @php
             $days = [1 => 'Пн', 2 => 'Вт', 3 => 'Ср', 4 => 'Чт', 5 => 'Пт', 6 => 'Сб', 7 => 'Вс'];
         @endphp
         @foreach ($days as $dayNumber => $dayName)
             <li class="nav-item">
-                <a class="nav-link {{ request('day') == $dayNumber ? 'active' : '' }}" href="{{ route('schedule-entries.index', ['day' => $dayNumber]) }}">{{ $dayName }}</a>
+                <a class="nav-link {{ request('day') == $dayNumber ? 'active' : '' }}" href="{{ route('schedule-entries.index', array_merge(request()->query(), ['day' => $dayNumber])) }}">{{ $dayName }}</a>
             </li>
         @endforeach
     </ul>
@@ -25,6 +25,24 @@
             Добавить запись
         </button>
     </div>
+
+    {{-- Форма поиска --}}
+    <form action="{{ route('schedule-entries.index') }}" method="GET" class="mb-3">
+        {{-- Добавляем скрытые поля для всех текущих параметров, кроме самого поиска --}}
+        @foreach (request()->query() as $key => $value)
+            @if ($key !== 'search')
+                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+            @endif
+        @endforeach
+
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Поиск по названию или описанию..." value="{{ request('search') }}">
+            <button class="btn btn-outline-secondary" type="submit">Найти</button>
+            @if (request('search'))
+                <a href="{{ route('schedule-entries.index', array_diff_key(request()->query(), ['search' => null])) }}" class="btn btn-outline-danger">Сбросить</a>
+            @endif
+        </div>
+    </form>
 
     {{-- Таблица с расписанием --}}
     <div class="table-responsive">
