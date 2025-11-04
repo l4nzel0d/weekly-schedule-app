@@ -19,6 +19,13 @@
         @endforeach
     </ul>
 
+    {{-- Кнопка добавления записи --}}
+    <div class="d-flex justify-content-end mb-3">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createScheduleEntryModal">
+            Добавить запись
+        </button>
+    </div>
+
     {{-- Таблица с расписанием --}}
     <div class="table-responsive">
         <table class="table table-hover">
@@ -56,3 +63,5 @@
     </div>
 </div>
 @endsection
+
+@include('schedule.components.create-modal')

@@ -11,7 +11,7 @@ class StoreScheduleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return auth()->check(); // Только аутентифицированные пользователи могут создавать записи
     }
 
     /**

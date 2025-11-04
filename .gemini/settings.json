@@ -15,6 +15,10 @@
                 "--api-key",
                 "ctx7sk-68c7b4a8-c70a-4f1c-94c1-b5ea3ac436de"
             ]
+        },
+        "chrome-devtools": {
+            "command": "npx",
+            "args": ["-y", "chrome-devtools-mcp@latest"]
         }
     }
 }

@@ -52,7 +52,12 @@ class ScheduleController extends Controller
             return response()->json(['message' => 'Произошла ошибка при создании записей.'], 500);
         }
 
-        return response()->json(['message' => 'Записи успешно созданы.']);
+        $redirectUrl = $request->headers->get('referer', route('schedule.index'));
+
+        return response()->json([
+            'message' => 'Записи успешно созданы.',
+            'redirectUrl' => $redirectUrl
+        ]);
     }
 
     /**
