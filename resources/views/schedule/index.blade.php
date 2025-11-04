@@ -7,14 +7,14 @@
     {{-- Переключатель дней недели --}}
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
-            <a class="nav-link {{ request('day') == 'all' || !request()->has('day') ? 'active' : '' }}" href="{{ route('schedule.index', ['day' => 'all']) }}">Вся неделя</a>
+            <a class="nav-link {{ request('day') == 'all' || !request()->has('day') ? 'active' : '' }}" href="{{ route('schedule-entries.index', ['day' => 'all']) }}">Вся неделя</a>
         </li>
         @php
             $days = [1 => 'Пн', 2 => 'Вт', 3 => 'Ср', 4 => 'Чт', 5 => 'Пт', 6 => 'Сб', 7 => 'Вс'];
         @endphp
         @foreach ($days as $dayNumber => $dayName)
             <li class="nav-item">
-                <a class="nav-link {{ request('day') == $dayNumber ? 'active' : '' }}" href="{{ route('schedule.index', ['day' => $dayNumber]) }}">{{ $dayName }}</a>
+                <a class="nav-link {{ request('day') == $dayNumber ? 'active' : '' }}" href="{{ route('schedule-entries.index', ['day' => $dayNumber]) }}">{{ $dayName }}</a>
             </li>
         @endforeach
     </ul>
@@ -41,7 +41,7 @@
                 @php $lastDay = null; @endphp
                 @forelse ($groupedEntries as $day => $entries)
                     @foreach ($entries as $entry)
-                        <tr class="schedule-row" data-entry='{{ json_encode($entry) }}'>
+                        <tr class="schedule-row" id="entry-{{ $entry->id }}" data-entry='{{ json_encode($entry) }}' data-bs-toggle="modal" data-bs-target="#editScheduleEntryModal" style="cursor: pointer;">
                             <td>
                                 @if ($day !== $lastDay)
                                     <strong>{{ $days[$day] }}</strong>
@@ -65,3 +65,5 @@
 @endsection
 
 @include('schedule.components.create-modal')
+@include('schedule.components.edit-modal')
+@include('schedule.components.delete-confirm-modal')

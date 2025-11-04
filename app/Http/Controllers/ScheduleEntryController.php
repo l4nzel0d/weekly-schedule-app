@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreScheduleRequest;
-use App\Http\Requests\UpdateScheduleRequest;
+use App\Http\Requests\StoreScheduleEntryRequest;
+use App\Http\Requests\UpdateScheduleEntryRequest;
 use App\Models\ScheduleEntry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
-class ScheduleController extends Controller
+class ScheduleEntryController extends Controller
 {
     /**
      * Отображает страницу с расписанием, опционально отфильтрованным по дню недели.
@@ -31,7 +32,7 @@ class ScheduleController extends Controller
     /**
      * Сохраняет новые записи в расписании.
      */
-    public function store(StoreScheduleRequest $request)
+    public function store(StoreScheduleEntryRequest $request)
     {
         $validated = $request->validated();
 
@@ -52,7 +53,7 @@ class ScheduleController extends Controller
             return response()->json(['message' => 'Произошла ошибка при создании записей.'], 500);
         }
 
-        $redirectUrl = $request->headers->get('referer', route('schedule.index'));
+        $redirectUrl = $request->headers->get('referer', route('schedule-entries.index'));
 
         return response()->json([
             'message' => 'Записи успешно созданы.',
@@ -63,10 +64,10 @@ class ScheduleController extends Controller
     /**
      * Обновляет существующую запись в расписании.
      */
-    public function update(UpdateScheduleRequest $request, ScheduleEntry $scheduleEntry)
+    public function update(UpdateScheduleEntryRequest $request, ScheduleEntry $schedule_entry)
     {
         $validated = $request->validated();
-        $scheduleEntry->update($validated);
+        $schedule_entry->update($validated);
 
         return response()->json(['message' => 'Запись успешно обновлена.']);
     }
@@ -74,15 +75,18 @@ class ScheduleController extends Controller
     /**
      * Удаляет запись из расписания.
      */
-    public function destroy(ScheduleEntry $scheduleEntry)
+    public function destroy(ScheduleEntry $schedule_entry)
     {
         // Проверяем, что пользователь является владельцем записи
-        if ($scheduleEntry->user_id !== auth()->id()) {
+        if ($schedule_entry->user_id !== auth()->id()) {
             return response()->json(['message' => 'У вас нет прав на удаление этой записи.'], 403);
         }
 
-        $scheduleEntry->delete();
+        $schedule_entry->delete();
 
-        return response()->json(['message' => 'Запись успешно удалена.']);
+        return response()->json([
+            'message' => 'Запись успешно удалена.',
+            'redirectUrl' => request()->headers->get('referer', route('schedule-entries.index'))
+        ]);
     }
 }

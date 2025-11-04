@@ -1,11 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\ScheduleEntryController;
 
 // Главная страница перенаправляет на страницу расписания
 Route::get('/', function () {
-    return redirect('/schedule');
+    return redirect('/schedule-entries');
 });
 
 // Маршруты для аутентификации (например, /login, /register)
@@ -13,8 +13,8 @@ Auth::routes();
 
 // Группа маршрутов, требующих аутентификации
 Route::middleware(['auth'])->group(function () {
-    // Определяем только необходимые маршруты для ресурса Schedule
-    Route::resource('schedule', ScheduleController::class)->only([
+    // Определяем только необходимые маршруты для ресурса ScheduleEntry
+    Route::resource('schedule-entries', ScheduleEntryController::class)->only([
         'index', 'store', 'update', 'destroy'
     ]);
 });

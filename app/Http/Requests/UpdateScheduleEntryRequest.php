@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use \App\Models\ScheduleEntry;
 
-class UpdateScheduleRequest extends FormRequest
+class UpdateScheduleEntryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -12,10 +13,10 @@ class UpdateScheduleRequest extends FormRequest
     public function authorize(): bool
     {
         // Получаем запись расписания из параметров маршрута
-        $scheduleEntry = $this->route('scheduleEntry');
+        $schedule_entry = $this->route('schedule_entry');
 
         // Проверяем, что запись существует и принадлежит текущему пользователю
-        return $scheduleEntry && $scheduleEntry->user_id === auth()->id();
+        return $schedule_entry && $schedule_entry->user_id === auth()->id();
     }
 
     /**

@@ -1,7 +1,7 @@
 <div class="modal fade" id="createScheduleEntryModal" tabindex="-1" aria-labelledby="createScheduleEntryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="createScheduleEntryForm" method="POST" action="{{ route('schedule.store') }}">
+            <form id="createScheduleEntryForm" method="POST" action="{{ route('schedule-entries.store') }}">
                 <div class="modal-header">
                     <h5 class="modal-title" id="createScheduleEntryModalLabel">Добавить запись</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
