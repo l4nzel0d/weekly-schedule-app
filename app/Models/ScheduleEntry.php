@@ -28,4 +28,12 @@ class ScheduleEntry extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Получить все теги, связанные с этой записью.
+     */
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
 }

@@ -54,4 +54,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(ScheduleEntry::class);
     }
+
+    /**
+     * Получить теги, принадлежащие пользователю.
+     */
+    public function tags()
+    {
+        return $this->hasMany(Tag::class);
+    }
 }

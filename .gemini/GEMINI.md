@@ -92,6 +92,117 @@
 | `start_time` | TIME | Время начала (без даты) |
 | `end_time` | TIME | Время окончания (без даты). Действует constraint `end_time > start_time`. |
 
+#### `tags` (Теги)
+
+| Поле | Тип | Роль / Примечание |
+| :--- | :--- | :--- |
+| `id` | BIGINT | PK |
+| `user_id` | BIGINT | FK (связь с `users.id`) |
+| `name` | STRING | Название тега. Уникально для пользователя. |
+| `bootstrap_color_class` | STRING | Имя класса Bootstrap для цвета (например, `primary`, `success`). По умолчанию `secondary`. |
+
+#### `schedule_entry_tag` (Сводная таблица для связи записей и тегов)
+
+| Поле | Тип | Роль / Примечание |
+| :--- | :--- | :--- |
+| `schedule_entry_id` | BIGINT | FK (связь с `schedule_entries.id`). Часть составного PK. |
+| `tag_id` | BIGINT | FK (связь с `tags.id`). Часть составного PK. |
+
 ## Примечания
 
 В коде оставляй комментарии на русском языке и пиши их так, чтобы не было очевидно, что это писала ИИ, то есть не обращайся ко мне, а пиши как бы от моего лица.
+
+## План по добавлению функционала "Теги"
+
+#### 1. Общая концепция и архитектура
+
+**Концепция:** Добавление сущности "Теги" позволит пользователям классифицировать записи в расписании, прикрепляя к ним один или несколько тегов (например, "Работа", "Учеба", "Спорт"). Теги будут персонализированными (принадлежать конкретному пользователю) и иметь ассоциированный цвет для лучшей визуализации.
+
+**Общая архитектура и этапы реализации:**
+
+*   **Этап 1: База данных и Модели (Завершено)**
+    *   Создана модель `Tag` с полями `id`, `name`, `user_id` (FK к `users`) и `bootstrap_color_class` (для хранения имени класса Bootstrap-цвета).
+    *   Создана сводная таблица `schedule_entry_tag` для реализации связи "многие-ко-многим" между `ScheduleEntry` и `Tag`.
+    *   Настроены Eloquent-связи: `User hasMany Tag`, `Tag belongsTo User`, `ScheduleEntry belongsToMany Tag`, `Tag belongsToMany ScheduleEntry`.
+    *   Миграции выполнены, база данных пересоздана.
+
+*   **Этап 2: CRUD для Тегов (Текущий этап)**
+    *   Реализация отдельной страницы `/tags` для полного управления тегами (создание, просмотр, редактирование, удаление).
+    *   Интеграция цветных бейджей Bootstrap для визуального представления тегов.
+
+*   **Этап 3: Интеграция Тегов в CRUD Записей Расписания (Следующий этап)**
+    *   Модификация модальных окон создания/редактирования записей расписания (`create-modal.blade.php`, `edit-modal.blade.php`) для выбора и прикрепления существующих тегов к записи.
+    *   Обновление методов `store` и `update` в `ScheduleEntryController` для сохранения связей с тегами.
+
+*   **Этап 4: Фильтрация Расписания по Тегам (Финальный этап)**
+    *   Добавление на страницу расписания (`/schedule-entries`) возможности фильтрации записей по одному или нескольким тегам.
+    *   Модификация метода `index` в `ScheduleEntryController` для обработки этой фильтрации.
+
+#### 2. Детальный план по Этапу 2: CRUD для Тегов (Страница `/tags`)
+
+**Цель:** Создать полноценную страницу для управления тегами, доступную через межстраничную навигацию.
+
+**Бэкенд:**
+
+*   **`app/Http/Controllers/TagController.php`:**
+    *   **`index()`:** Получает все теги текущего пользователя, сортирует по имени и передает в представление `tags.index`. Возвращает `view('tags.index', ['tags' => $tags])`.
+    *   **`store(StoreTagRequest $request)`:** Создает новый тег, привязывает к пользователю. Возвращает JSON с `redirectUrl`.
+    *   **`update(UpdateTagRequest $request, Tag $tag)`:** Обновляет существующий тег. Использует Route-Model Binding. Возвращает JSON с `redirectUrl`.
+    *   **`destroy(Tag $tag)`:** Удаляет тег. Использует Route-Model Binding. Возвращает JSON с `redirectUrl`.
+    *   Методы `create()`, `edit()`, `show()` остаются нереализованными (или удаляются), так как UI будет модальным.
+*   **`app/Http/Requests/StoreTagRequest.php`:**
+    *   **`authorize()`:** `return auth()->check();`
+    *   **`rules()`:** Валидация `name` (обязательное, уникальное для пользователя) и `bootstrap_color_class` (обязательное, из списка разрешенных классов Bootstrap).
+*   **`app/Http/Requests/UpdateTagRequest.php`:**
+    *   **`authorize()`:** Проверяет, что текущий пользователь является владельцем тега (`$tag->user_id === auth()->id()`).
+    *   **`rules()`:** Валидация `name` (обязательное, уникальное для пользователя, игнорируя текущий тег) и `bootstrap_color_class`.
+*   **`routes/web.php`:**
+    *   Добавлен ресурсный маршрут: `Route::resource('tags', TagController::class)->except(['create', 'edit', 'show']);` в группу `auth` middleware.
+
+**Фронтенд (Views):**
+
+*   **`resources/views/tags/index.blade.php`:**
+    *   Расширяет `layouts.app`.
+    *   Содержит заголовок "Управление тегами".
+    *   Кнопка "Добавить тег" (`data-bs-toggle="modal"` для `createTagModal`).
+    *   Контейнер `div.d-flex.flex-wrap.gap-2` для отображения тегов.
+    *   В цикле `@forelse ($tags as $tag)` каждый тег отображается как интерактивный Bootstrap Badge (`<button type="button" class="btn badge text-bg-{{ $tag->bootstrap_color_class ?? 'secondary' }} fs-6" data-bs-toggle="modal" data-bs-target="#editDeleteTagModal" data-tag='{{ json_encode($tag) }}'>{{ $tag->name }}</button>`).
+    *   Подключает компоненты модальных окон: `create-modal`, `edit-delete-modal`, `delete-confirm-modal`.
+*   **`resources/views/tags/components/create-modal.blade.php`:**
+    *   Модальное окно с формой для создания тега.
+    *   Поле `name` (текст).
+    *   Набор кнопок/радиокнопок для выбора `bootstrap_color_class` (например, `primary`, `success`, `danger` и т.д.).
+*   **`resources/views/tags/components/edit-delete-modal.blade.php`:**
+    *   Модальное окно с формой для редактирования тега.
+    *   Поле `name` (текст).
+    *   Набор кнопок/радиокнопок для выбора `bootstrap_color_class`.
+    *   Кнопка "Удалить" в футере модала, которая открывает `delete-confirm-modal`.
+*   **`resources/views/tags/components/delete-confirm-modal.blade.php`:**
+    *   Простое модальное окно для подтверждения удаления тега.
+*   **`resources/views/layouts/app.blade.php`:**
+    *   Добавлена ссылка в навигацию: `<a class="nav-link" href="{{ route('tags.index') }}">Мои теги</a>`.
+
+**Фронтенд (JavaScript):**
+
+*   **`resources/js/tags/create.js`:**
+    *   Обработчик события `submit` формы создания тега.
+    *   Отправка `axios.post` на `/tags`.
+    *   Обработка ошибок валидации (422) и других ошибок.
+    *   При успехе: редирект по `redirectUrl` из ответа сервера.
+    *   Очистка формы и ошибок при закрытии модала.
+*   **`resources/js/tags/edit-delete.js`:**
+    *   Обработчик события `click` по бейджам тегов в `tags.index` для открытия `edit-delete-modal` и заполнения его данными.
+    *   Обработчик события `submit` формы редактирования тега.
+    *   Отправка `axios.put` на `/tags/{id}`.
+    *   Обработка ошибок валидации (422) и других ошибок.
+    *   При успехе: редирект по `redirectUrl`.
+    *   Логика для кнопки "Удалить" внутри `edit-delete-modal`:
+        *   Открытие `delete-confirm-modal`.
+        *   Скрытие `edit-delete-modal` при открытии `delete-confirm-modal`.
+        *   Показ `edit-delete-modal` при отмене удаления.
+    *   Обработчик события `click` кнопки подтверждения удаления в `delete-confirm-modal`.
+    *   Отправка `axios.delete` на `/tags/{id}`.
+    *   При успехе: редирект по `redirectUrl`.
+    *   Очистка формы и ошибок при закрытии модала.
+*   **`resources/js/app.js`:**
+    *   Импортирует `resources/js/tags/create.js` и `resources/js/tags/edit-delete.js`.

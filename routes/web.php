@@ -17,6 +17,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('schedule-entries', ScheduleEntryController::class)->only([
         'index', 'store', 'update', 'destroy'
     ]);
+
+    // Добавляем маршруты для управления тегами
+    Route::resource('tags', \App\Http\Controllers\TagController::class)->except([
+        'create', 'edit', 'show'
+    ]);
 });
 
 // Стандартный маршрут /home, который создается при установке auth, можно оставить или удалить
