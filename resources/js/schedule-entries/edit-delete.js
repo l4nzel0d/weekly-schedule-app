@@ -32,14 +32,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Устанавливаем action для формы
         editForm.action = `/schedule-entries/${entry.id}`;
-    }
 
+        // Сбрасываем все чекбоксы тегов
+        editForm.querySelectorAll('#edit-tags-container input[type="checkbox"]').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+
+        // Устанавливаем чекбоксы для тегов, связанных с записью
+        if (entry.tags) {
+            entry.tags.forEach(tag => {
+                const checkbox = editForm.querySelector(`#edit_tag_${tag.id}`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+    }
     // Отправка формы редактирования
     editForm.addEventListener('submit', function (event) {
         event.preventDefault();
         const formData = new FormData(this);
         // Преобразуем FormData в обычный JavaScript-объект для отправки как JSON
         const data = Object.fromEntries(formData.entries());
+
+        // Собираем выбранные теги
+        const selectedTags = [];
+        editForm.querySelectorAll('#edit-tags-container input[type="checkbox"]:checked').forEach(checkbox => {
+            selectedTags.push(checkbox.value);
+        });
+        data.tags = selectedTags;
 
         // Удаляем лишние поля, которые не должны быть в теле PUT-запроса
         delete data._token;

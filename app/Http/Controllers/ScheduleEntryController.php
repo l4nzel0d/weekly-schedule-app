@@ -16,7 +16,7 @@ class ScheduleEntryController extends Controller
      */
     public function index(Request $request)
     {
-        $query = auth()->user()->scheduleEntries();
+        $query = auth()->user()->scheduleEntries()->with('tags');
 
         if ($request->has('day') && $request->query('day') !== 'all') {
             $query->where('day_of_week', $request->query('day'));
@@ -34,8 +34,12 @@ class ScheduleEntryController extends Controller
         $entries = $query->orderBy('day_of_week')->orderBy('start_time')->get();
 
         $groupedEntries = $entries->groupBy('day_of_week');
+        $tags = auth()->user()->tags()->get();
 
-        return view('schedule-entries.index', ['groupedEntries' => $groupedEntries]);
+        return view('schedule-entries.index', [
+            'groupedEntries' => $groupedEntries,
+            'tags' => $tags
+        ]);
     }
 
     /**
@@ -48,7 +52,7 @@ class ScheduleEntryController extends Controller
         try {
             DB::transaction(function () use ($validated) {
                 foreach ($validated['days_of_week'] as $day) {
-                    ScheduleEntry::create([
+                    $scheduleEntry = ScheduleEntry::create([
                         'user_id' => auth()->id(),
                         'title' => $validated['title'],
                         'description' => $validated['description'],
@@ -56,6 +60,11 @@ class ScheduleEntryController extends Controller
                         'start_time' => $validated['start_time'],
                         'end_time' => $validated['end_time'],
                     ]);
+
+                    // Прикрепляем теги, если они были переданы
+                    if (isset($validated['tags'])) {
+                        $scheduleEntry->tags()->sync($validated['tags']);
+                    }
                 }
             });
         } catch (\Exception $e) {
@@ -77,6 +86,14 @@ class ScheduleEntryController extends Controller
     {
         $validated = $request->validated();
         $schedule_entry->update($validated);
+
+        // Прикрепляем теги, если они были переданы
+        if (isset($validated['tags'])) {
+            $schedule_entry->tags()->sync($validated['tags']);
+        } else {
+            // Если теги не переданы (например, все были сняты), отсоединяем все теги
+            $schedule_entry->tags()->detach();
+        }
 
         return response()->json(['message' => 'Запись успешно обновлена.']);
     }

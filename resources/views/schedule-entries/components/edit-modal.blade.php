@@ -43,6 +43,20 @@
                             <input type="time" class="form-control" id="edit-end_time" name="end_time" required>
                         </div>
                     </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Теги</label>
+                        <div class="d-flex flex-wrap gap-2" id="edit-tags-container">
+                            @forelse ($tags as $tag)
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" name="tags[]" id="edit_tag_{{ $tag->id }}" value="{{ $tag->id }}">
+                                    <label class="form-check-label badge text-bg-{{ $tag->bootstrap_color_class ?? 'secondary' }}" for="edit_tag_{{ $tag->id }}">{{ $tag->name }}</label>
+                                </div>
+                            @empty
+                                <p class="text-muted">У вас пока нет тегов. Создайте их на странице "Мои теги".</p>
+                            @endforelse
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-danger" id="delete-button">Удалить</button>

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use \App\Models\ScheduleEntry;
 
 class UpdateScheduleEntryRequest extends FormRequest
@@ -32,6 +33,8 @@ class UpdateScheduleEntryRequest extends FormRequest
             'day_of_week' => ['required', 'integer', 'between:1,7'],
             'start_time' => ['required', 'date_format:H:i'],
             'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
+            'tags' => ['nullable', 'array'],
+            'tags.*' => ['integer', Rule::exists('tags', 'id')->where('user_id', auth()->id())],
         ];
     }
 }

@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const formData = new FormData(this);
 
+            // Собираем выбранные теги и добавляем их в FormData
+            createForm.querySelectorAll('input[name="tags[]"]:checked').forEach(checkbox => {
+                formData.append('tags[]', checkbox.value);
+            });
+
             axios.post(this.action, formData)
                 .then(response => {
                     // В случае успеха, используем URL для редиректа из ответа сервера

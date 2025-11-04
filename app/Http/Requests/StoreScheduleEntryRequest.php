@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreScheduleEntryRequest extends FormRequest
 {
@@ -28,6 +29,8 @@ class StoreScheduleEntryRequest extends FormRequest
             'days_of_week.*' => ['integer', 'between:1,7'], // Валидация каждого элемента массива
             'start_time' => ['required', 'date_format:H:i'],
             'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
+            'tags' => ['nullable', 'array'],
+            'tags.*' => ['integer', Rule::exists('tags', 'id')->where('user_id', auth()->id())],
         ];
     }
 }

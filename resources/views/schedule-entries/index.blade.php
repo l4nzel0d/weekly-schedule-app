@@ -53,13 +53,14 @@
                     <th scope="col">Время</th>
                     <th scope="col">Название</th>
                     <th scope="col">Описание</th>
+                    <th scope="col">Теги</th>
                 </tr>
             </thead>
             <tbody>
                 @php $lastDay = null; @endphp
                 @forelse ($groupedEntries as $day => $entries)
                     @foreach ($entries as $entry)
-                        <tr class="schedule-row" id="entry-{{ $entry->id }}" data-entry='{{ json_encode($entry) }}' data-bs-toggle="modal" data-bs-target="#editScheduleEntryModal" style="cursor: pointer;">
+                        <tr class="schedule-row" id="entry-{{ $entry->id }}" data-entry='{{ json_encode($entry->load('tags')) }}' data-bs-toggle="modal" data-bs-target="#editScheduleEntryModal" style="cursor: pointer;">
                             <td>
                                 @if ($day !== $lastDay)
                                     <strong>{{ $days[$day] }}</strong>
@@ -68,12 +69,17 @@
                             <td>{{ date('H:i', strtotime($entry->start_time)) }} - {{ date('H:i', strtotime($entry->end_time)) }}</td>
                             <td>{{ $entry->title }}</td>
                             <td>{{ $entry->description }}</td>
+                            <td>
+                                @foreach ($entry->tags as $tag)
+                                    <span class="badge text-bg-{{ $tag->bootstrap_color_class ?? 'secondary' }}">{{ $tag->name }}</span>
+                                @endforeach
+                            </td>
                         </tr>
                         @php $lastDay = $day; @endphp
                     @endforeach
                 @empty
                     <tr>
-                        <td colspan="4" class="text-center">На выбранный день записей нет.</td>
+                        <td colspan="5" class="text-center">На выбранный день записей нет.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -83,5 +89,5 @@
 @endsection
 
 @include('schedule-entries.components.create-modal')
-@include('schedule-entries.components.edit-modal')
+@include('schedule-entries.components.edit-modal', ['tags' => $tags])
 @include('schedule-entries.components.delete-confirm-modal')
