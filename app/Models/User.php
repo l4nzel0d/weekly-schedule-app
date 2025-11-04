@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\ScheduleEntry; // Импортируем модель ScheduleEntry
 
 class User extends Authenticatable
 {
@@ -44,5 +45,13 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Получить записи расписания, принадлежащие пользователю.
+     */
+    public function scheduleEntries()
+    {
+        return $this->hasMany(ScheduleEntry::class);
     }
 }
