@@ -82,6 +82,6 @@
 </div>
 @endsection
 
-@include('schedule.components.create-modal')
-@include('schedule.components.edit-modal')
-@include('schedule.components.delete-confirm-modal')
+@include('schedule-entries.components.create-modal')
+@include('schedule-entries.components.edit-modal')
+@include('schedule-entries.components.delete-confirm-modal')

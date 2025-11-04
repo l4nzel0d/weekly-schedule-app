@@ -1,5 +1,5 @@
 import './bootstrap';
-import './schedule-create-handler.js';
-import './schedule-edit-handler.js';
+import './schedule-entries/create.js';
+import './schedule-entries/edit-delete.js';
 import './tags/create.js';
 import './tags/edit-delete.js';

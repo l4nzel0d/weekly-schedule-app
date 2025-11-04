@@ -35,7 +35,7 @@ class ScheduleEntryController extends Controller
 
         $groupedEntries = $entries->groupBy('day_of_week');
 
-        return view('schedule.index', ['groupedEntries' => $groupedEntries]);
+        return view('schedule-entries.index', ['groupedEntries' => $groupedEntries]);
     }
 
     /**
