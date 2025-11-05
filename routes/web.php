@@ -1,28 +1,41 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ScheduleEntryController;
+use App\Http\Controllers\TagController;
 
 // Главная страница перенаправляет на страницу расписания
 Route::get('/', function () {
     return redirect('/schedule-entries');
 });
 
-// Маршруты для аутентификации (например, /login, /register)
-Auth::routes();
+// Маршруты для аутентификации
+Route::group([], function() {
+    // Маршруты входа
+    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [LoginController::class, 'login']);
 
-// Группа маршрутов, требующих аутентификации
+    // Маршрут выхода
+    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+    // Маршруты регистрации
+    Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('register', [RegisterController::class, 'register']);
+});
+
+
+// Группа маршрутов работы с бизнес-сущностями
+// Требует аутентификации
 Route::middleware(['auth'])->group(function () {
-    // Определяем только необходимые маршруты для ресурса ScheduleEntry
+    // Маршруты для работы с ScheduleEntry
     Route::resource('schedule-entries', ScheduleEntryController::class)->only([
         'index', 'store', 'update', 'destroy'
     ]);
 
-    // Добавляем маршруты для управления тегами
-    Route::resource('tags', \App\Http\Controllers\TagController::class)->except([
-        'create', 'edit', 'show'
+    // Маршруты для работы с Tag
+    Route::resource('tags', TagController::class)->only([
+        'index', 'store', 'update', 'destroy'
     ]);
 });
-
-// Стандартный маршрут /home, который создается при установке auth, можно оставить или удалить
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
