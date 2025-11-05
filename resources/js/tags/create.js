@@ -9,8 +9,15 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
 
             const formData = new FormData(this);
+            const bsClass = formData.get('bootstrap_color_class');
+            const genericColor = window.colorMaps.bsClassToColor[bsClass];
 
-            axios.post(this.action, formData)
+            const payload = {
+                name: formData.get('name'),
+                color: genericColor,
+            };
+
+            axios.post(this.action, payload)
                 .then(response => {
                     if (response.data && response.data.redirectUrl) {
                         window.location.href = response.data.redirectUrl;

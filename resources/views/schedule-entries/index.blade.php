@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@use(App\Support\ColorMapper)
+
 @section('content')
 <div class="container">
     <h1 class="mb-4">Моё расписание</h1>
@@ -71,6 +73,10 @@
             allTags: {!! json_encode($tags->keyBy('id')) !!},
             initialTagIds: {!! json_encode(request('tags', [])) !!}
         };
+        // Карта цветов для JS
+        window.colorMaps = {
+            colorToBsClass: @json(ColorMapper::getColorToBsClassMap())
+        };
     </script>
 
     {{-- Таблица с расписанием --}}
@@ -100,7 +106,7 @@
                             <td>{{ $entry->description }}</td>
                             <td>
                                 @foreach ($entry->tags as $tag)
-                                    <span class="badge text-bg-{{ $tag->bootstrap_color_class ?? 'secondary' }}">{{ $tag->name }}</span>
+                                    <span class="badge text-bg-{{ ColorMapper::colorToBsClass($tag->color) }}">{{ $tag->name }}</span>
                                 @endforeach
                             </td>
                         </tr>

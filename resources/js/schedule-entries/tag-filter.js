@@ -29,7 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!tag) return;
 
             const badge = document.createElement('span');
-            badge.className = `badge text-bg-${tag.bootstrap_color_class || 'secondary'} me-1 fw-normal d-inline-flex align-items-center`;
+            const bsClass = window.colorMaps.colorToBsClass[tag.color] || 'secondary';
+            badge.className = `badge text-bg-${bsClass} me-1 fw-normal d-inline-flex align-items-center`;
             badge.textContent = tag.name;
 
             const closeButton = document.createElement('span');
@@ -56,7 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const item = document.createElement('a');
                 item.className = 'dropdown-item';
                 item.href = '#';
-                item.innerHTML = `<span class="badge text-bg-${tag.bootstrap_color_class || 'secondary'} me-1">${tag.name}</span>`;
+                const bsClass = window.colorMaps.colorToBsClass[tag.color] || 'secondary';
+                item.innerHTML = `<span class="badge text-bg-${bsClass} me-1">${tag.name}</span>`;
                 item.onclick = (e) => {
                     e.preventDefault();
                     selectTag(tagId);

@@ -28,8 +28,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function fillEditForm(tag) {
         editForm.querySelector('#edit-tag-name').value = tag.name;
+
+        // Преобразуем внутренний цвет (например, 'blue') в класс bootstrap (например, 'primary')
+        const bsClass = window.colorMaps.colorToBsClass[tag.color];
+
         // Выбираем соответствующий радиобаттон цвета
-        const colorRadio = editForm.querySelector(`input[name="bootstrap_color_class"][value="${tag.bootstrap_color_class}"]`);
+        const colorRadio = editForm.querySelector(`input[name="bootstrap_color_class"][value="${bsClass}"]`);
         if (colorRadio) {
             colorRadio.checked = true;
         }
@@ -42,13 +46,16 @@ document.addEventListener('DOMContentLoaded', () => {
     editForm.addEventListener('submit', function (event) {
         event.preventDefault();
         const formData = new FormData(this);
-        const data = Object.fromEntries(formData.entries());
+        const bsClass = formData.get('bootstrap_color_class');
+        const genericColor = window.colorMaps.bsClassToColor[bsClass];
 
-        // Удаляем лишние поля
-        delete data._token;
-        delete data._method;
+        const payload = {
+            name: formData.get('name'),
+            color: genericColor,
+            _method: 'PUT' // Не забываем метод для Laravel
+        };
 
-        axios.put(this.action, data)
+        axios.post(this.action, payload) // Используем post для обхода ограничений, Laravel поймет по _method
             .then(response => {
                 if (response.data && response.data.redirectUrl) {
                     window.location.href = response.data.redirectUrl;

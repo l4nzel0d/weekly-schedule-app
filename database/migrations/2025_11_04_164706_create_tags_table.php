@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('name');
-            $table->string('bootstrap_color_class')->default('secondary'); // Класс цвета Bootstrap
+            $table->string('color'); // Название цвета (например, red, blue)
             $table->timestamps();
 
             // Добавляем уникальный индекс для пары user_id и name, чтобы теги не повторялись у одного пользователя

@@ -1,3 +1,5 @@
+@use(App\Support\ColorMapper)
+
 <div class="modal fade" id="createScheduleEntryModal" tabindex="-1" aria-labelledby="createScheduleEntryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -53,7 +55,7 @@
                             @forelse ($tags as $tag)
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="checkbox" name="tags[]" id="create_tag_{{ $tag->id }}" value="{{ $tag->id }}">
-                                    <label class="form-check-label badge text-bg-{{ $tag->bootstrap_color_class ?? 'secondary' }}" for="create_tag_{{ $tag->id }}">{{ $tag->name }}</label>
+                                    <label class="form-check-label badge text-bg-{{ ColorMapper::colorToBsClass($tag->color) }}" for="create_tag_{{ $tag->id }}">{{ $tag->name }}</label>
                                 </div>
                             @empty
                                 <p class="text-muted">У вас пока нет тегов. Создайте их на странице "Мои теги".</p>

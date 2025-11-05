@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Support\ColorMapper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -29,7 +30,7 @@ class StoreTagRequest extends FormRequest
                 'max:255',
                 Rule::unique('tags')->where('user_id', auth()->id()),
             ],
-            'bootstrap_color_class' => ['required', 'string', Rule::in(['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'dark'])],
+            'color' => ['required', 'string', Rule::in(ColorMapper::getColors())],
         ];
     }
 }

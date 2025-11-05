@@ -1,3 +1,5 @@
+@use(App\Support\ColorMapper)
+
 <div class="modal fade" id="createTagModal" tabindex="-1" aria-labelledby="createTagModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -19,13 +21,11 @@
                     <div class="mb-3">
                         <label class="form-label">Цвет тега</label>
                         <div>
-                            @php
-                                $colors = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'dark'];
-                            @endphp
-                            @foreach ($colors as $color)
+                            @foreach (ColorMapper::getColors() as $color)
+                                @php($bsClass = ColorMapper::colorToBsClass($color))
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="bootstrap_color_class" id="create-tag-color-{{ $color }}" value="{{ $color }}" {{ $color == 'secondary' ? 'checked' : '' }}>
-                                    <label class="form-check-label badge text-bg-{{ $color }}" for="create-tag-color-{{ $color }}">{{ ucfirst($color) }}</label>
+                                    <input class="form-check-input" type="radio" name="bootstrap_color_class" id="create-tag-color-{{ $bsClass }}" value="{{ $bsClass }}" {{ $color == 'grey' ? 'checked' : '' }}>
+                                    <label class="form-check-label badge text-bg-{{ $bsClass }}" for="create-tag-color-{{ $bsClass }}">{{ __('colors.' . $color) }}</label>
                                 </div>
                             @endforeach
                         </div>

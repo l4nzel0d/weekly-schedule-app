@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@use(App\Support\ColorMapper)
+
 @section('content')
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -13,7 +15,7 @@
         <div class="card-body">
             <div class="d-flex flex-wrap gap-2">
                 @forelse ($tags as $tag)
-                    <button type="button" class="btn badge text-bg-{{ $tag->bootstrap_color_class ?? 'secondary' }} fs-6"
+                    <button type="button" class="btn badge text-bg-{{ ColorMapper::colorToBsClass($tag->color) }} fs-6"
                             data-bs-toggle="modal" data-bs-target="#editDeleteTagModal"
                             data-tag='{{ json_encode($tag) }}'>
                         {{ $tag->name }}
@@ -33,5 +35,11 @@
 @endsection
 
 @push('scripts')
-    {{-- Здесь будет JS --}}
+<script>
+    // Передаем карты цветов в JavaScript для использования в формах
+    window.colorMaps = {
+        bsClassToColor: @json(ColorMapper::getBsClassToColorMap()),
+        colorToBsClass: @json(ColorMapper::getColorToBsClassMap())
+    };
+</script>
 @endpush

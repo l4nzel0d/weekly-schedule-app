@@ -11,7 +11,7 @@ class Tag extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['name', 'user_id', 'bootstrap_color_class'];
+    protected $fillable = ['name', 'user_id', 'color'];
 
     /**
      * Получить пользователя, которому принадлежит тег.
