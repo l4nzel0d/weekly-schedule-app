@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\ScheduleEntry;
+use App\Models\Tag;
 
 class ScheduleEntrySeeder extends Seeder
 {
@@ -23,8 +24,16 @@ class ScheduleEntrySeeder extends Seeder
             ]
         );
 
-        // Очищаем старые записи для этого пользователя, чтобы избежать дубликатов
+        // Очищаем старые записи и теги для этого пользователя, чтобы избежать дубликатов
         $user->scheduleEntries()->delete();
+        $user->tags()->delete();
+
+        // --- Создание тегов ---
+        $tagEducation = $user->tags()->create(['name' => 'Обучение', 'color' => 'blue']);
+        $tagSport = $user->tags()->create(['name' => 'Спорт', 'color' => 'green']);
+        $tagArt = $user->tags()->create(['name' => 'Творчество', 'color' => 'yellow']);
+
+        // --- Создание записей в расписании ---
 
         // Школа (Пн-Пт, 8:00 - 13:30)
         for ($day = 1; $day <= 5; $day++) {
@@ -66,5 +75,18 @@ class ScheduleEntrySeeder extends Seeder
             'start_time' => '10:15',
             'end_time' => '11:45',
         ]);
+
+        // --- Привязка тегов к записям ---
+        ScheduleEntry::where('title', 'Школа')->each(function ($entry) use ($tagEducation) {
+            $entry->tags()->attach($tagEducation);
+        });
+
+        ScheduleEntry::where('title', 'Плавание')->each(function ($entry) use ($tagSport) {
+            $entry->tags()->attach($tagSport);
+        });
+
+        ScheduleEntry::where('title', 'Рисование')->each(function ($entry) use ($tagArt) {
+            $entry->tags()->attach($tagArt);
+        });
     }
 }
