@@ -18,8 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
             axios.post(this.action, formData)
                 .then(response => {
                     // В случае успеха, используем URL для редиректа из ответа сервера
-                    if (response.data && response.data.redirectUrl) {
-                        window.location.href = response.data.redirectUrl;
+                    if (response.data?.payload?.redirectUrl) {
+                        window.location.href = response.data.payload.redirectUrl;
                     } else {
                         // Если URL не пришел, просто перезагружаем страницу
                         window.location.reload();

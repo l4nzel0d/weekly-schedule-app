@@ -25,8 +25,8 @@ class StoreScheduleEntryRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'days_of_week' => ['required', 'array', 'min:1'],
-            'days_of_week.*' => ['integer', 'between:1,7'], // Валидация каждого элемента массива
+            'days_of_week' => ['required', 'array', 'min:1'], // Выбран как минимум один день недели
+            'days_of_week.*' => ['integer', 'between:1,7'], // День недели в диапазоне [1,7]
             'start_time' => ['required', 'date_format:H:i'],
             'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
             'tags' => ['nullable', 'array'],

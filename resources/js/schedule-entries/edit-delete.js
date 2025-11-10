@@ -69,7 +69,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Отправляем PUT-запрос с данными в формате JSON
         axios.put(this.action, data)
             .then(response => {
-                window.location.reload(); // Перезагружаем для простоты
+                // Выполняем редирект, чтобы сервер корректно перерисовал таблицу
+                if (response.data?.payload?.redirectUrl) {
+                    window.location.href = response.data.payload.redirectUrl;
+                } else {
+                    window.location.reload();
+                }
             })
             .catch(handleError);
     });
@@ -109,8 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
         axios.delete(`/schedule-entries/${currentEntryId}`)
             .then(response => {
                 // Выполняем редирект, чтобы сервер корректно перерисовал таблицу
-                if (response.data && response.data.redirectUrl) {
-                    window.location.href = response.data.redirectUrl;
+                if (response.data?.payload?.redirectUrl) {
+                    window.location.href = response.data.payload.redirectUrl;
                 } else {
                     window.location.reload();
                 }

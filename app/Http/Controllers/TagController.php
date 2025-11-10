@@ -4,10 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTagRequest;
 use App\Http\Requests\UpdateTagRequest;
+use App\Http\Requests\DestroyTagRequest;
 use App\Models\Tag;
+use App\Http\Controllers\Traits\ProvidesBackUrl; // Подключаем трейт для URL
+use App\Support\JsonResponseBuilder; // Подключаем наш билдер ответов
 
 class TagController extends Controller
 {
+    use ProvidesBackUrl; // Используем трейт
+
+    protected string $fallbackRoute = 'tags.index'; // Запасной маршрут для тегов
     /**
      * Отображает страницу управления тегами.
      */
@@ -24,10 +30,9 @@ class TagController extends Controller
     {
         auth()->user()->tags()->create($request->validated());
 
-        return response()->json([
-            'message' => 'Тег успешно создан.',
-            'redirectUrl' => route('tags.index')
-        ]);
+        // Формируем успешный ответ с URL для редиректа.
+        $redirectUrl = $this->getBackUrl($this->fallbackRoute);
+        return JsonResponseBuilder::success('Тег успешно создан.', ['redirectUrl' => $redirectUrl]);
     }
 
     /**
@@ -37,27 +42,22 @@ class TagController extends Controller
     {
         $tag->update($request->validated());
 
-        return response()->json([
-            'message' => 'Тег успешно обновлен.',
-            'redirectUrl' => route('tags.index')
-        ]);
+        // Формируем успешный ответ с URL для редиректа.
+        $redirectUrl = $this->getBackUrl($this->fallbackRoute);
+        return JsonResponseBuilder::success('Тег успешно обновлен.', ['redirectUrl' => $redirectUrl]);
     }
 
     /**
      * Удаляет тег.
      */
-    public function destroy(Tag $tag)
+    public function destroy(DestroyTagRequest $request, Tag $tag)
     {
-        // Авторизация
-        if ($tag->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Это действие не авторизовано.'], 403);
-        }
+        // Логика авторизации теперь находится в DestroyTagRequest.
 
         $tag->delete();
 
-        return response()->json([
-            'message' => 'Тег успешно удален.',
-            'redirectUrl' => route('tags.index')
-        ]);
+        // Формируем успешный ответ с URL для редиректа.
+        $redirectUrl = $this->getBackUrl($this->fallbackRoute);
+        return JsonResponseBuilder::success('Тег успешно удален.', ['redirectUrl' => $redirectUrl]);
     }
 }

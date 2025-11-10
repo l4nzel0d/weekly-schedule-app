@@ -19,8 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             axios.post(this.action, payload)
                 .then(response => {
-                    if (response.data && response.data.redirectUrl) {
-                        window.location.href = response.data.redirectUrl;
+                    if (response.data?.payload?.redirectUrl) {
+                        window.location.href = response.data.payload.redirectUrl;
                     } else {
                         window.location.reload();
                     }

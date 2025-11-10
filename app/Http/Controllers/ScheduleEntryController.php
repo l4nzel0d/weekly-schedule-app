@@ -4,13 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreScheduleEntryRequest;
 use App\Http\Requests\UpdateScheduleEntryRequest;
+use App\Http\Requests\DestroyScheduleEntryRequest;
 use App\Models\ScheduleEntry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Traits\ProvidesBackUrl; // Подключаем трейт для URL
+use App\Support\JsonResponseBuilder; // Подключаем наш билдер ответов
 
 class ScheduleEntryController extends Controller
 {
+    use ProvidesBackUrl; // Используем трейт
+
+    protected string $fallbackRoute = 'schedule-entries.index'; // Запасной маршрут для расписания
     /**
      * Отображает страницу с расписанием, опционально отфильтрованным по дню недели.
      */
@@ -22,7 +28,7 @@ class ScheduleEntryController extends Controller
             $query->where('day_of_week', $request->query('day'));
         }
 
-        // Добавляем логику поиска
+        // Логику поиска по названию и описанию
         if ($request->filled('search')) {
             $searchTerm = strtolower($request->query('search'));
             $query->where(function ($subQuery) use ($searchTerm) {
@@ -62,34 +68,27 @@ class ScheduleEntryController extends Controller
     {
         $validated = $request->validated();
 
-        try {
-            DB::transaction(function () use ($validated) {
-                foreach ($validated['days_of_week'] as $day) {
-                    $scheduleEntry = ScheduleEntry::create([
-                        'user_id' => auth()->id(),
-                        'title' => $validated['title'],
-                        'description' => $validated['description'],
-                        'day_of_week' => $day,
-                        'start_time' => $validated['start_time'],
-                        'end_time' => $validated['end_time'],
-                    ]);
+        DB::transaction(function () use ($validated) {
+            foreach ($validated['days_of_week'] as $day) {
+                $scheduleEntry = ScheduleEntry::create([
+                    'user_id' => auth()->id(),
+                    'title' => $validated['title'],
+                    'description' => $validated['description'],
+                    'day_of_week' => $day,
+                    'start_time' => $validated['start_time'],
+                    'end_time' => $validated['end_time'],
+                ]);
 
-                    // Прикрепляем теги, если они были переданы
-                    if (isset($validated['tags'])) {
-                        $scheduleEntry->tags()->sync($validated['tags']);
-                    }
+                // Прикрепляем теги, если они были переданы
+                if (isset($validated['tags'])) {
+                    $scheduleEntry->tags()->sync($validated['tags']);
                 }
-            });
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Произошла ошибка при создании записей.'], 500);
-        }
+            }
+        });
 
-        $redirectUrl = $request->headers->get('referer', route('schedule-entries.index'));
-
-        return response()->json([
-            'message' => 'Записи успешно созданы.',
-            'redirectUrl' => $redirectUrl
-        ]);
+        // Формируем успешный ответ с URL для редиректа.
+        $redirectUrl = $this->getBackUrl($this->fallbackRoute);
+        return JsonResponseBuilder::success('Записи успешно созданы.', ['redirectUrl' => $redirectUrl]);
     }
 
     /**
@@ -108,24 +107,22 @@ class ScheduleEntryController extends Controller
             $schedule_entry->tags()->detach();
         }
 
-        return response()->json(['message' => 'Запись успешно обновлена.']);
+        // Формируем успешный ответ с URL для редиректа.
+        $redirectUrl = $this->getBackUrl($this->fallbackRoute);
+        return JsonResponseBuilder::success('Запись успешно обновлена.', ['redirectUrl' => $redirectUrl]);
     }
 
     /**
      * Удаляет запись из расписания.
      */
-    public function destroy(ScheduleEntry $schedule_entry)
+    public function destroy(DestroyScheduleEntryRequest $request, ScheduleEntry $schedule_entry)
     {
-        // Проверяем, что пользователь является владельцем записи
-        if ($schedule_entry->user_id !== auth()->id()) {
-            return response()->json(['message' => 'У вас нет прав на удаление этой записи.'], 403);
-        }
+        // Логика авторизации теперь находится в DestroyScheduleEntryRequest.
 
         $schedule_entry->delete();
 
-        return response()->json([
-            'message' => 'Запись успешно удалена.',
-            'redirectUrl' => request()->headers->get('referer', route('schedule-entries.index'))
-        ]);
+        // Формируем успешный ответ с URL для редиректа.
+        $redirectUrl = $this->getBackUrl($this->fallbackRoute);
+        return JsonResponseBuilder::success('Запись успешно удалена.', ['redirectUrl' => $redirectUrl]);
     }
 }

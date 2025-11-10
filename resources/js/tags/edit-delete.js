@@ -57,8 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         axios.post(this.action, payload) // Используем post для обхода ограничений, Laravel поймет по _method
             .then(response => {
-                if (response.data && response.data.redirectUrl) {
-                    window.location.href = response.data.redirectUrl;
+                if (response.data?.payload?.redirectUrl) {
+                    window.location.href = response.data.payload.redirectUrl;
                 } else {
                     window.location.reload();
                 }
@@ -103,8 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         axios.delete(`/tags/${currentTagId}`)
             .then(response => {
-                if (response.data && response.data.redirectUrl) {
-                    window.location.href = response.data.redirectUrl;
+                if (response.data?.payload?.redirectUrl) {
+                    window.location.href = response.data.payload.redirectUrl;
                 } else {
                     window.location.reload();
                 }
