@@ -4,6 +4,7 @@ namespace App\Support;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 /**
@@ -41,11 +42,16 @@ final class JsonResponseBuilder
      *
      * @param string $message Сообщение об ошибке.
      * @param int $status HTTP-код состояния.
+     * @param array $errors Опциональный массив с деталями ошибок.
      * @return \Illuminate\Http\JsonResponse
      */
-    public static function error(string $message, int $status): JsonResponse
+    public static function error(string $message, int $status, array $errors = []): JsonResponse
     {
-        return response()->json(['message' => $message], $status);
+        return response()->json([
+            'message' => $message,
+            // Приведение к (object) для консистентности (пустой массив станет {}).
+            'errors' => (object) $errors
+        ], $status);
     }
 
     /**
@@ -78,5 +84,16 @@ final class JsonResponseBuilder
         Log::error($e);
 
         return self::error($message, 500);
+    }
+
+    /**
+     * Ответ для ошибок валидации (422).
+     *
+     * @param \Illuminate\Validation\ValidationException $e
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public static function validationError(ValidationException $e): JsonResponse
+    {
+        return self::error($e->getMessage(), 422, $e->errors());
     }
 }

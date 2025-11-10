@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Modal } from 'bootstrap';
+import { handleResponseError } from '../helpers/responseErrorHandler.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const editDeleteModalElement = document.getElementById('editDeleteTagModal');
@@ -63,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.reload();
                 }
             })
-            .catch(handleError);
+            .catch(error => handleResponseError(error, errorContainer));
     });
 
     // Логика удаления
@@ -109,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.location.reload();
                 }
             })
-            .catch(handleError);
+            .catch(error => handleResponseError(error, document.getElementById('delete-tag-error-container')));
     });
 
     // Очистка при закрытии основного модала
@@ -124,23 +125,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    function handleError(error) {
-        console.error('Ошибка при отправке формы тега:', error.response);
-        if (error.response && error.response.status === 422) {
-            const errors = error.response.data.errors;
-            let errorMessages = '<ul>';
-            for (const field in errors) {
-                errors[field].forEach(message => {
-                    errorMessages += `<li>${message}</li>`;
-                });
-            }
-            errorMessages += '</ul>';
-            errorContainer.innerHTML = errorMessages;
-            errorContainer.classList.remove('d-none');
-        } else {
-            const status = error.response ? error.response.status : 'N/A';
-            errorContainer.innerHTML = `Произошла непредвиденная ошибка. Код: ${status}`;
-            errorContainer.classList.remove('d-none');
-        }
-    }
 });

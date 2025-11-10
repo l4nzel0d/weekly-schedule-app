@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { handleResponseError } from '../helpers/responseErrorHandler.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const createForm = document.getElementById('createScheduleEntryForm');
@@ -25,28 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         window.location.reload();
                     }
                 })
-                .catch(error => {
-                    console.error('Ошибка при отправке формы:', error.response);
-                    if (error.response && error.response.status === 422) {
-                        // Ошибки валидации
-                        const errors = error.response.data.errors;
-                        let errorMessages = '<ul>';
-                        for (const field in errors) {
-                            errors[field].forEach(message => {
-                                errorMessages += `<li>${message}</li>`;
-                            });
-                        }
-                        errorMessages += '</ul>';
-
-                        errorContainer.innerHTML = errorMessages;
-                        errorContainer.classList.remove('d-none');
-                    } else {
-                        // Другие ошибки сервера
-                        const status = error.response ? error.response.status : 'N/A';
-                        errorContainer.innerHTML = `Произошла непредвиденная ошибка. Код: ${status}`;
-                        errorContainer.classList.remove('d-none');
-                    }
-                });
+                .catch(error => handleResponseError(error, errorContainer));
         });
     }
 
