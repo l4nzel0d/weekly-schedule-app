@@ -8,7 +8,6 @@ use Illuminate\Http\Request; // Для типа запроса
 use Illuminate\Database\Eloquent\ModelNotFoundException; // Для обработки 404
 use Illuminate\Auth\Access\AuthorizationException; // Для обработки 403
 use Illuminate\Validation\ValidationException; // Для обработки 422
-use Throwable; // Для общего типа исключений
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(

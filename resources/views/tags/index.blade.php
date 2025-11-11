@@ -1,3 +1,5 @@
+@section('title', 'Мои теги')
+
 @extends('layouts.app')
 
 @use(App\Support\ColorMapper)
@@ -5,7 +7,7 @@
 @section('content')
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Управление тегами</h1>
+        <h1>Мои теги</h1>
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTagModal">
             Добавить тег
         </button>
