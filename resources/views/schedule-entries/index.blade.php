@@ -95,7 +95,7 @@
                 @php $lastDay = null; @endphp
                 @forelse ($groupedEntries as $day => $entries)
                     @foreach ($entries as $entry)
-                        <tr class="schedule-row" id="entry-{{ $entry->id }}" data-entry='{{ json_encode($entry->load('tags')) }}' data-bs-toggle="modal" data-bs-target="#editScheduleEntryModal" style="cursor: pointer;">
+                        <tr class="schedule-row" id="entry-{{ $entry->id }}" data-entry="{{ json_encode($entry->load('tags')) }}" data-bs-toggle="modal" data-bs-target="#editScheduleEntryModal" style="cursor: pointer;">
                             <td>
                                 @if ($day !== $lastDay)
                                     <strong>{{ $days[$day] }}</strong>
