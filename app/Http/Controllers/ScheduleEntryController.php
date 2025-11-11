@@ -28,12 +28,12 @@ class ScheduleEntryController extends Controller
             $query->where('day_of_week', $request->query('day'));
         }
 
-        // Логику поиска по названию и описанию
+        // Логика поиска по названию и описанию
         if ($request->filled('search')) {
-            $searchTerm = strtolower($request->query('search'));
+            $searchTerm = $request->query('search');
             $query->where(function ($subQuery) use ($searchTerm) {
-                $subQuery->whereRaw('LOWER(title) LIKE ?', ["%{$searchTerm}%"])
-                         ->orWhereRaw('LOWER(description) LIKE ?', ["%{$searchTerm}%"]);
+                $subQuery->where('title', 'ILIKE', "%{$searchTerm}%")
+                         ->orWhere('description', 'ILIKE', "%{$searchTerm}%");
             });
         }
 
