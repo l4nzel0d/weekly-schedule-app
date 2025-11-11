@@ -114,7 +114,17 @@
                     @endforeach
                 @empty
                     <tr>
-                        <td colspan="5" class="text-center">На выбранный день записей нет.</td>
+                        <td colspan="5" class="text-center">
+                            @if (request()->filled('search') || request()->filled('tags'))
+                                Записи, удовлетворяющие условиям фильтра, не найдены.
+                            @else
+                                @if (request('day') && request('day') !== 'all')
+                                    На выбранный день записей нет.
+                                @else
+                                    В вашем расписании пока нет записей.
+                                @endif
+                            @endif
+                        </td>
                     </tr>
                 @endforelse
             </tbody>
