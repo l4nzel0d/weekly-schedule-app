@@ -6,7 +6,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Вы уверены, что хотите удалить тег <strong id="tag-to-delete-name"></strong>?
+                <p>Вы уверены, что хотите удалить следующий тег?</p>
+                <div id="delete-tag-badge-container" class="text-center my-3">
+                    <!-- Бейдж тега будет вставлен сюда -->
+                </div>
+                <div id="delete-tag-error-container" class="alert alert-danger d-none mt-3"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>

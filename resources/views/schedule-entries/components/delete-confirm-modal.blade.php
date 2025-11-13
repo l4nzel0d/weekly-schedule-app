@@ -6,7 +6,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Вы уверены, что хотите удалить эту запись?
+                <p>Вы уверены, что хотите удалить следующую запись?</p>
+                <div id="delete-entry-details">
+                    <!-- Детали будут вставлены сюда с помощью JavaScript -->
+                </div>
+                <div id="delete-error-container" class="alert alert-danger d-none mt-3"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>

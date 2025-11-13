@@ -95,10 +95,46 @@ document.addEventListener('DOMContentLoaded', () => {
     // Скрываем модал редактирования перед показом модала подтверждения
     deleteConfirmModalElement.addEventListener('show.bs.modal', () => {
         editModal.hide();
+
+        // Подготавливаем и вставляем детали записи в модальное окно подтверждения
+        const deleteEntryDetails = document.getElementById('delete-entry-details');
+        if (currentEntryData && deleteEntryDetails) {
+            // Словарь для преобразования номера дня недели в название
+            const daysOfWeek = {
+                1: 'Понедельник',
+                2: 'Вторник',
+                3: 'Среда',
+                4: 'Четверг',
+                5: 'Пятница',
+                6: 'Суббота',
+                7: 'Воскресенье'
+            };
+            const dayName = daysOfWeek[currentEntryData.day_of_week] || 'Неизвестный день';
+            const startTime = currentEntryData.start_time.substring(0, 5);
+            const endTime = currentEntryData.end_time.substring(0, 5);
+
+            // Формируем и вставляем HTML
+            deleteEntryDetails.innerHTML = `
+                <p class="mb-1"><strong>День:</strong> ${dayName}</p>
+                <p class="mb-1"><strong>Время:</strong> ${startTime} - ${endTime}</p>
+                <p class="mb-0"><strong>Название:</strong> ${currentEntryData.title}</p>
+            `;
+        }
     });
 
     // Возвращаем модал редактирования, если удаление было отменено
     deleteConfirmModalElement.addEventListener('hidden.bs.modal', () => {
+        // Очищаем контейнер с ошибками и деталями при закрытии
+        const errorContainer = document.getElementById('delete-error-container');
+        if(errorContainer) {
+            errorContainer.classList.add('d-none');
+            errorContainer.textContent = '';
+        }
+        const deleteEntryDetails = document.getElementById('delete-entry-details');
+        if(deleteEntryDetails) {
+            deleteEntryDetails.innerHTML = '';
+        }
+
         if (!isDeleting) {
             // Показываем модал и заново заполняем его сохраненными данными
             editModal.show();

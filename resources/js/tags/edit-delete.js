@@ -72,13 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     deleteTagButton.addEventListener('click', () => {
         if (!currentTagData) return;
-
-        // Вставляем имя тега в модал подтверждения
-        const tagNameElement = document.getElementById('tag-to-delete-name');
-        if (tagNameElement) {
-            tagNameElement.textContent = currentTagData.name;
-        }
-
         isDeleting = false; // Сбрасываем флаг при каждом открытии
         deleteConfirmModal.show();
     });
@@ -86,13 +79,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // Скрываем модал редактирования перед показом модала подтверждения
     deleteConfirmModalElement.addEventListener('show.bs.modal', () => {
         editDeleteModal.hide();
+
+        // Вставляем бейдж тега в модал подтверждения
+        const deleteBadgeContainer = document.getElementById('delete-tag-badge-container');
+        if (currentTagData && deleteBadgeContainer) {
+            const bsClass = window.colorMaps.colorToBsClass[currentTagData.color] || 'secondary';
+            const tagName = currentTagData.name;
+
+            // Воссоздаем HTML бейджа
+            deleteBadgeContainer.innerHTML = `<span class="badge text-bg-${bsClass} fs-6">${tagName}</span>`;
+        }
     });
 
     // Возвращаем модал редактирования, если удаление было отменено
     deleteConfirmModalElement.addEventListener('hidden.bs.modal', () => {
+        // Очищаем контейнеры при закрытии
+        const errorContainer = document.getElementById('delete-tag-error-container');
+        if (errorContainer) {
+            errorContainer.classList.add('d-none');
+            errorContainer.textContent = '';
+        }
+        const deleteBadgeContainer = document.getElementById('delete-tag-badge-container');
+        if (deleteBadgeContainer) {
+            deleteBadgeContainer.innerHTML = '';
+        }
+
         if (!isDeleting) {
             editDeleteModal.show();
-            if(currentTagData) {
+            if (currentTagData) {
                 fillEditForm(currentTagData);
             }
         }
