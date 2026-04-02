@@ -1,59 +1,112 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Веб-приложение "Расписание"
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Создано в рамках курсовой работы по дисциплине "Проектирование и разработка серверных частей интернет-ресурсов"
 
-## About Laravel
+## Описание разрабатываемого веб-приложения
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Концепция
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Веб-приложение «Расписание» представляет собой простой и удобный инструмент для создания и управления персональным недельным расписанием. В отличие от сложного планировщика с привязкой к конкретным датам, данное приложение фокусируется на управлении повторяющимися событиями в рамках недели (например, рабочие задачи, учебные занятия, тренировки). Пользователь может создавать записи, привязывая их к одному или нескольким дням недели, и просматривать свое расписание как на всю неделю целиком, так и на отдельный выбранный день.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Используемые технологии
 
-## Learning Laravel
+-   **Бэкенд:** Laravel (PHP)
+-   **База данных:** PostgreSQL
+-   **Фронтенд:** HTML5, CSS3, JavaScript, Bootstrap 5
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Основные возможности (Use Cases)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Система предоставляет пользователю следующие возможности:
 
-## Laravel Sponsors
+**Аутентификация:**
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+-   **Зарегистрироваться:** Создание нового аккаунта в системе.
+-   **Войти в аккаунт:** Аутентификация существующего пользователя.
+-   **Выйти из аккаунта:** Завершение текущей сессии пользователя.
 
-### Premium Partners
+**Работа с расписанием:**
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+-   **Просмотреть расписание:** Отображение всех записей в расписании пользователя в виде таблицы. Пользователь может переключаться между видом на всю неделю и на конкретный день.
+-   **Создать запись:** Добавление новой записи в расписание. Пользователь может указать название, описание, время начала и окончания, а также выбрать один или несколько дней недели, для которых эта запись актуальна.
+-   **Изменить запись:** Редактирование существующей записи в расписании.
+-   **Удалить запись:** Удаление записи из расписания с шагом подтверждения.
+-   **Управлять тегами:** Создавать, просматривать, редактировать и удалять персонализированные теги.
+-   **Прикреплять/откреплять теги:** Прикреплять существующие теги к записи расписания или откреплять их при создании/редактировании записи.
 
-## Contributing
+### Пользовательский интерфейс и флоу
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Весь пользовательский интерфейс построен с использованием фреймворка **Bootstrap 5** для обеспечения чистого, современного и адаптивного дизайна.
 
-## Code of Conduct
+**Страница расписания:**
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+![Страница расписания](report/ScheduleImageForReadme.png)
 
-## Security Vulnerabilities
+-   **Переключатель вида:** В верхней части страницы расположен компонент навигации (Bootstrap Navs), позволяющий пользователю переключаться между режимами просмотра «Вся неделя» и конкретными днями («Пн», «Вт», «Ср» и т.д.).
+-   **Кнопка «Добавить запись»:** На странице постоянно присутствует кнопка, при нажатии на которую открывается модальное окно для создания новой записи.
+-   **Таблица расписания:** Основные данные представлены в виде таблицы со столбцами: **День недели, Время, Заголовок, Описание**. Для улучшения читаемости, название дня недели отображается только для первой записи этого дня; для последующих записей того же дня ячейка остается пустой.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**Взаимодействие с записями:**
+
+-   **Редактирование:** При клике на любую область строки (`<tr>`) таблицы, соответствующей записи, открывается модальное окно для изменения данных этой записи.
+-   **Удаление:** При наведении курсора мыши на строку записи, рядом с ней плавно появляется красная иконка корзины. Клик по иконке открывает модальное окно для подтверждения удаления.
+
+**Модальные окна (Создание/Изменение через AJAX):**
+Для обеспечения плавного пользовательского опыта (без перезагрузки страницы при каждой ошибке) формы создания и редактирования работают через AJAX.
+
+![Пример модального окна](report/ScheduleCreateModal.png)
+
+1.  При отправке формы JavaScript выполняет **клиентскую валидацию**. Проверяются базовые правила, например, что поле «Название» заполнено и что `end_time` больше `start_time`. При ошибке отправка на сервер блокируется и сообщение выводится мгновенно внутри модального окна.
+2.  Если клиентская валидация пройдена, AJAX-запрос уходит на сервер. Модальное окно при этом **не закрывается**.
+3.  Сервер в контроллере проводит **обязательную повторную валидацию**, включая сложную бизнес-логику (например, проверку наложения интервалов).
+4.  **В случае ошибки на сервере:** Контроллер возвращает JSON-ответ с текстом ошибки. JavaScript получает этот ответ и отображает сообщение в том же самом, все еще открытом, модальном окне.
+5.  **В случае успеха:** Контроллер возвращает JSON-ответ с подтверждением успеха. JavaScript, получив его, принудительно перезагружает страницу, чтобы пользователь увидел обновленное расписание.
+
+**Управление тегами:**
+
+![Страница тегов](report/TagsImageForReadme.png)
+
+-   На отдельной странице `/tags` пользователь может создавать, просматривать, редактировать и удалять свои персонализированные теги.
+-   Каждый тег отображается как интерактивный Bootstrap Badge с выбранным цветом.
+-   При создании/редактировании записи расписания, пользователь может прикрепить к ней один или несколько существующих тегов через чекбоксы в модальном окне.
+-   В таблице расписания теги отображаются рядом с заголовком записи в виде цветных бейджей.
+
+### Основные сущности (Таблицы в БД)
+
+#### `users` (Пользователи)
+
+| Поле       | Тип    | Роль / Примечание                        |
+| :--------- | :----- | :--------------------------------------- |
+| `id`       | BIGINT | PK                                       |
+| `name`     | STRING | Имя пользователя                         |
+| `email`    | STRING | Уникальный email, используется для входа |
+| `password` | STRING | Хешированный пароль                      |
+
+#### `schedule_entries` (Записи в расписании)
+
+| Поле          | Тип     | Роль / Примечание                                                         |
+| :------------ | :------ | :------------------------------------------------------------------------ |
+| `id`          | BIGINT  | PK                                                                        |
+| `user_id`     | BIGINT  | FK (связь с `users.id`)                                                   |
+| `title`       | STRING  | Название записи                                                           |
+| `description` | TEXT    | Опциональное описание                                                     |
+| `day_of_week` | INTEGER | Номер дня недели (1 = Пн, 7 = Вс)                                         |
+| `start_time`  | TIME    | Время начала (без даты)                                                   |
+| `end_time`    | TIME    | Время окончания (без даты). Действует constraint `end_time > start_time`. |
+
+#### `tags` (Теги)
+
+| Поле                    | Тип    | Роль / Примечание                                                                          |
+| :---------------------- | :----- | :----------------------------------------------------------------------------------------- |
+| `id`                    | BIGINT | PK                                                                                         |
+| `user_id`               | BIGINT | FK (связь с `users.id`)                                                                    |
+| `name`                  | STRING | Название тега. Уникально для пользователя.                                                 |
+| `bootstrap_color_class` | STRING | Имя класса Bootstrap для цвета (например, `primary`, `success`). По умолчанию `secondary`. |
+
+#### `schedule_entry_tag` (Сводная таблица для связи записей и тегов)
+
+| Поле                | Тип    | Роль / Примечание                                        |
+| :------------------ | :----- | :------------------------------------------------------- |
+| `schedule_entry_id` | BIGINT | FK (связь с `schedule_entries.id`). Часть составного PK. |
+| `tag_id`            | BIGINT | FK (связь с `tags.id`). Часть составного PK.             |
